@@ -1,4 +1,4 @@
 interface:
   display_name: "学习与会议知识整理助手"
-  short_description: "整理学习与会议记录，纠错分级，生成图表、记忆卡和必要知识拓展"
-  default_prompt: "使用 $knowledge-organizer 整理以下学习或会议材料，总结纠错，区分重点、次要与了解即可，生成合适的表格或图表、记忆卡和必要拓展。"
+  short_description: "将学习与会议记录整理成简洁 HTML，用核心对照表和折叠自测帮助理解复习"
+  default_prompt: "使用 $knowledge-organizer 整理以下材料，突出重点、减少重复，生成简洁易懂且可离线打开的 HTML，包含核心表格和折叠自测答案。"

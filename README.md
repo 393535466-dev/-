@@ -1,16 +1,16 @@
 # 学习与会议知识整理助手
 
-`knowledge-organizer` 是一个项目级 Codex Skill，把课堂笔记、课程材料和会议记录整理成可理解、可复习、可执行的知识包。
+`knowledge-organizer` 把课堂笔记、课程材料和会议记录整理成简洁易懂、可离线阅读的 HTML 学习页。默认包含核心对照表与折叠自测，重要纠错和来源按需展开。
 
 ## 能做什么
 
 | 能力 | 交付内容 |
 | --- | --- |
-| 总结与划重点 | 一句话摘要、30 秒重点速览、主题框架 |
-| 纠错 | 保留原记录、说明修正依据；不确定内容单列待确认 |
-| 重要性分级 | 重点 / 次要 / 了解即可，附理由和掌握或行动标准 |
+| 总结与划重点 | 一句话主旨、重点速览、核心表格，减少重复 |
+| 纠错 | 正文使用修正结果；原片段和依据在折叠附录，关键冲突在主表可见 |
+| 重要性分级 | 重点 / 次要 / 了解即可融入主表，不另做重复分级表 |
 | 表格与图表 | 对照表、概念图、流程图；有真实数值时生成 SVG 柱状图 |
-| 记忆辅助 | 主动回忆卡、自测题、可调整的复习建议 |
+| 记忆辅助 | 通常 3–5 题，答案默认折叠，先回忆再核对 |
 | 必要知识发散 | 补足前置知识、易混概念、相关应用，默认最多 3 条 |
 | 会议跟进 | 区分决策、建议、未决问题，整理负责人、截止日与验收条件 |
 
@@ -18,31 +18,32 @@
 
 ## 项目级安装
 
-下载本仓库或克隆到本地。在目标项目中，将以下四项放入 `.agents/skills/knowledge-organizer/`：
+下载本仓库或克隆到本地。在目标项目中，将以下五项放入 `.agents/skills/knowledge-organizer/`：
 
 ```text
 .agents/skills/knowledge-organizer/
 ├── SKILL.md
 ├── agents/openai.yaml
 ├── references/
-└── scripts/
+├── scripts/
+└── assets/
 ```
 
 例如，本仓库在项目外时，从目标项目目录执行（将路径换成实际位置）：
 
 ```bash
 mkdir -p .agents/skills/knowledge-organizer
-cp -R /path/to/knowledge-organizer/SKILL.md /path/to/knowledge-organizer/agents /path/to/knowledge-organizer/references /path/to/knowledge-organizer/scripts .agents/skills/knowledge-organizer/
+cp -R /path/to/knowledge-organizer/SKILL.md /path/to/knowledge-organizer/agents /path/to/knowledge-organizer/references /path/to/knowledge-organizer/scripts /path/to/knowledge-organizer/assets .agents/skills/knowledge-organizer/
 ```
 
-重新打开项目或开始新对话，在 Skill 列表中检查是否加载。运行环境需支持 Codex Skills；生成 SVG 的脚本需 Python 3，其余核心整理功能不需要安装 Python 包。
+重新打开项目或开始新对话，在 Skill 列表中检查是否加载。生成 HTML / SVG 的脚本使用 Python 3 标准库，不需要第三方 Python 包。
 
 ## 触发方式
 
 显式调用最清楚：
 
 ```text
-$knowledge-organizer 整理以下课堂笔记，指出错误，划分重点、次要与了解即可，生成概念图和记忆卡：
+$knowledge-organizer 整理以下课堂笔记，突出重点、减少重复，生成简洁 HTML，包含核心对照表和折叠自测：
 【粘贴笔记】
 ```
 
@@ -74,3 +75,13 @@ python3 -m unittest discover -s tests -v
 输入 JSON 必须包含 `title`、`unit`、`source` 和 `items`，每项提供唯一的 `label` 与有限数值 `value`。不接受未知值、重复标签、NaN 或无限值。支持正数、负数和全零数据；不能将概念的重要性凭空变成数值。
 
 Skill 指令是模型行为约定，不是独立运行的应用。结构验证和脚本测试不能保证每次模型输出完全正确；遇到专业事实或冲突信息仍需依据来源核实。公开仓库仅收录 Skill 与虚构示例，不含真实课堂或会议记录。
+
+## HTML 学习页
+
+默认在当前任务的 `outputs/knowledge-organizer/` 生成单文件 HTML 并返回链接。主页面突出重点和核心表格，问答、纠错与来源按需展开；正文离线可读，适配窄屏，打印展开答案和附录。用户指定其他格式时优先遵循。不自动部署网站。
+
+```bash
+python3 scripts/render_notes.py examples/notes-data.json /tmp/knowledge-notes.html
+```
+
+[HTML 示例](examples/notes.html)与[示例数据](examples/notes-data.json)为虚构学习材料。JSON 格式和生成要求见 [HTML 输出说明](references/html-output.md)。渲染脚本负责转义和排版，不替代知识判断与事实核实。
